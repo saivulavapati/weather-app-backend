@@ -4,7 +4,9 @@ import com.weatherapp.authentication_service.dto.LoginRequest;
 import com.weatherapp.authentication_service.dto.LoginResponse;
 import com.weatherapp.authentication_service.jwt.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,12 +49,16 @@ public class AuthController {
         }
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         UserDetails userDetails = (UserDetails) authenticate.getPrincipal();
-        String token = jwtUtils.generateJwtToken(userDetails.getUsername());
+        ResponseCookie cookie = jwtUtils.generateJwtCookie(userDetails.getUsername());
+//        String token = jwtUtils.generateJwtToken(userDetails.getUsername());
 //        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).toList();
         LoginResponse response = new LoginResponse();
-        response.setToken(token);
+        response.setUsername(userDetails.getUsername());
+//        response.setToken(token);
 //        response.setRoles(roles);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE,cookie.toString())
+                .body(response);
     }
 
 

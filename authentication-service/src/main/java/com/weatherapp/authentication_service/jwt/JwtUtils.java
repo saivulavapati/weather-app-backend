@@ -4,11 +4,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
+
 import javax.crypto.SecretKey;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Date;
 
 
@@ -18,13 +23,24 @@ public class JwtUtils {
     @Value("${spring.app.secretKey}")
     private String secretKey;
 
+    @Value("${spring.app.jwtCookieName}")
+    private String jwtCookie;
+
     @Value("${spring.app.expiration}")
     private long expirationTimeMilliSeconds;
     
-    public String extractJwtToken(HttpServletRequest request){
-        String authHeader = request.getHeader("Authorization");
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
-            return authHeader.substring(7);
+//    public String extractJwtToken(HttpServletRequest request){
+//        String authHeader = request.getHeader("Authorization");
+//        if(authHeader != null && authHeader.startsWith("Bearer ")){
+//            return authHeader.substring(7);
+//        }
+//        return null;
+//    }
+    
+    public String extractJwtTokenFromCookie(HttpServletRequest request){
+        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
+        if(cookie != null){
+            return cookie.getValue();
         }
         return null;
     }
@@ -36,6 +52,16 @@ public class JwtUtils {
                 .expiration(new Date(System.currentTimeMillis() + expirationTimeMilliSeconds))
                 .signWith(key())
                 .compact();
+    }
+
+    public ResponseCookie generateJwtCookie(String username){
+        String jwtToken = generateJwtToken(username);
+        ResponseCookie cookie = ResponseCookie.from(jwtCookie,jwtToken)
+                .path("/")
+                .maxAge(24*60*60)
+                .httpOnly(false)
+                .build();
+        return cookie;
     }
 
     private Key key() {
