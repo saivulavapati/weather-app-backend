@@ -6,6 +6,7 @@ import com.weatherapp.weather_service.exception.CityNotFoundException;
 import com.weatherapp.weather_service.exception.InvalidCoordinatesException;
 import com.weatherapp.weather_service.exception.WeatherClientException;
 import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class WeatherServiceImpl implements WeatherService{
 
     @Autowired
     private WeatherClient weatherClient;
+
+    @CircuitBreaker(name = "weather-service",fallbackMethod = "fallbackCityWeather")
     @Override
     public String getCityWeatherDetails(String city) {
         if (city == null || city.trim().isEmpty()) {
@@ -34,6 +37,7 @@ public class WeatherServiceImpl implements WeatherService{
         }
     }
 
+    @CircuitBreaker(name = "weather-service", fallbackMethod = "fallbackHourlyForecast")
     @Override
     public String getHourlyForecast(double lat, double lon) {
         try {
@@ -48,5 +52,13 @@ public class WeatherServiceImpl implements WeatherService{
         } catch (FeignException e) {
             throw new WeatherClientException("Error fetching hourly forecast.");
         }
+    }
+
+    public String fallbackCityWeather(String city,Throwable throwable){
+        return "Weather data currently unavailable for " + city + ". Please try again later.";
+    }
+
+    public String fallbackHourlyForecast(double lat, double lon, Throwable throwable){
+        return "Hourly forecast data is currently unavailable. Please try again later.";
     }
 }

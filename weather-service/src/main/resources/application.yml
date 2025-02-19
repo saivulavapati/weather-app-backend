@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: weather-service
+
+server:
+  port:8080
+
+openweather:
+  api:
+    key: c18d907f51bf7046b95d6cc17dac02a5
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      weatherService:
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 2
+        waitDurationInOpenState: 10s
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+  retry:
+    instances:
+      weatherService:
+        maxAttempts: 3
+        waitDuration: 2s
+
+

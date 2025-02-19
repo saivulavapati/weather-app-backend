@@ -1,36 +1,40 @@
 package com.weatherapp.whishlist_service.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Wishlist {
+public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String email;
 
-    @OneToMany(mappedBy = "wishlist",cascade = CascadeType.ALL,orphanRemoval = true)
-    private Set<City> cities;
+    @Column(nullable = false)
+    private String cityName;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="wishlist_id",nullable = false)
+    private Wishlist wishlist;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Wishlist wishlist = (Wishlist) o;
-        return email != null && email.equals(wishlist.email);
+        City city = (City) o;
+        return city != null && city.equals(city.cityName);
     }
 
     @Override
     public int hashCode() {
-        return email != null ? email.hashCode() : 0;
+        return cityName != null ? cityName.hashCode() : 0;
     }
+
 }

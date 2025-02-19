@@ -29,14 +29,6 @@ public class JwtUtils {
     @Value("${spring.app.expiration}")
     private long expirationTimeMilliSeconds;
     
-//    public String extractJwtToken(HttpServletRequest request){
-//        String authHeader = request.getHeader("Authorization");
-//        if(authHeader != null && authHeader.startsWith("Bearer ")){
-//            return authHeader.substring(7);
-//        }
-//        return null;
-//    }
-    
     public String extractJwtTokenFromCookie(HttpServletRequest request){
         Cookie cookie = WebUtils.getCookie(request, jwtCookie);
         if(cookie != null){
@@ -45,9 +37,9 @@ public class JwtUtils {
         return null;
     }
 
-    public String generateJwtToken(String username){
+    public String generateJwtToken(String email){
         return Jwts.builder()
-                .subject(username)
+                .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationTimeMilliSeconds))
                 .signWith(key())

@@ -8,9 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    private String username;
-    private String password;
-    private String dateOfBirth;
+public class UserDto {
     private String email;
+    private String password;
+
 }

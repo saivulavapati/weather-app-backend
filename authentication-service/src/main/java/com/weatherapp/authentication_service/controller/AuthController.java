@@ -40,7 +40,7 @@ public class AuthController {
         Authentication authenticate;
         try{
             authenticate = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         }catch (AuthenticationException ex){
             Map<String,Object> body = new HashMap<>();
             body.put("message",ex.getMessage());
@@ -50,12 +50,8 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         UserDetails userDetails = (UserDetails) authenticate.getPrincipal();
         ResponseCookie cookie = jwtUtils.generateJwtCookie(userDetails.getUsername());
-//        String token = jwtUtils.generateJwtToken(userDetails.getUsername());
-//        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).toList();
         LoginResponse response = new LoginResponse();
         response.setUsername(userDetails.getUsername());
-//        response.setToken(token);
-//        response.setRoles(roles);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE,cookie.toString())
                 .body(response);
