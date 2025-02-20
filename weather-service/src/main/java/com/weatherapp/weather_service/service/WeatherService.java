@@ -1,7 +1,9 @@
 package com.weatherapp.weather_service.service;
 
-public interface WeatherService {
-    String getCityWeatherDetails(String city);
+import com.weatherapp.weather_service.dto.WeatherResponse;
 
-    String getHourlyForecast(double lat, double lon);
+public interface WeatherService {
+    WeatherResponse getCityWeatherDetails(String city);
+
+    WeatherResponse getHourlyForecast(double lat, double lon) throws Exception;
 }

@@ -19,15 +19,18 @@ public class GatewayConfig {
     public RouteLocator routes(RouteLocatorBuilder builder){
         return builder.routes()
                 .route("user-profile-service",
-                        r->r.path("/users/**")
-                                .filters(f->f.filter(jwtAuthenticationFilter))
+                        r->r.path("/api/v1/users/**")
                                 .uri("lb://USER-PROFILE-SERVICE"))
                 .route("weather-service",
-                        r-> r.path("/weather/**","/forecast/**")
+                        r-> r.path("/api/v1/weather/**")
                                 .filters(f->f.filter(jwtAuthenticationFilter))
                                 .uri("lb://WEATHER-SERVICE"))
+                .route("wishlist-service",
+                        r-> r.path("/api/v1/wishlist/**")
+                                .filters(f->f.filter(jwtAuthenticationFilter))
+                                .uri("lb://WISHLIST-SERVICE"))
                 .route("authentication-service",
-                        r->r.path("/auth/**").uri("lb://AUTHENTICATION-SERVICE"))
+                        r->r.path("/api/v1/auth/**").uri("lb://AUTHENTICATION-SERVICE"))
                 .build();
 
     }

@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
                 if (username != null && jwtUtils.validateJwtToken(token, username)) {
                     // Add the username to the request headers for downstream services
                     ServerHttpRequest modifiedRequest = request.mutate()
-                            .header("X-Authenticated-User", username) // Custom header
+                            .header("Authenticated-Email", username) // Custom header
                             .build();
 
                     // Continue the filter chain

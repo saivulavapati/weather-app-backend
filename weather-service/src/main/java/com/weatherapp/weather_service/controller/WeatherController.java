@@ -1,5 +1,7 @@
 package com.weatherapp.weather_service.controller;
 
+import com.weatherapp.weather_service.client.WeatherClient;
+import com.weatherapp.weather_service.dto.WeatherResponse;
 import com.weatherapp.weather_service.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,14 +19,14 @@ public class WeatherController {
     private WeatherService weatherService;
 
     @GetMapping
-    public ResponseEntity<?> getWeatherDetails(@RequestParam(required = false) String city){
-        String cityWeatherDetails = weatherService.getCityWeatherDetails(city);
-        return new ResponseEntity<>(cityWeatherDetails, HttpStatus.OK);
+    public ResponseEntity<WeatherResponse> getWeatherDetails(@RequestParam(required = false) String city){
+        WeatherResponse weatherResponse = weatherService.getCityWeatherDetails(city);
+        return new ResponseEntity<>(weatherResponse, HttpStatus.OK);
     }
 
     @GetMapping("/forecast")
-    public ResponseEntity<String> getHourlyForecast(@RequestParam double lat, @RequestParam double lon) {
-        String forecast = weatherService.getHourlyForecast(lat, lon);
-        return ResponseEntity.ok(forecast);
+    public ResponseEntity<WeatherResponse> getHourlyForecast(@RequestParam double lat, @RequestParam double lon) throws Exception {
+        WeatherResponse weatherResponse = weatherService.getHourlyForecast(lat, lon);
+        return ResponseEntity.ok(weatherResponse);
     }
 }

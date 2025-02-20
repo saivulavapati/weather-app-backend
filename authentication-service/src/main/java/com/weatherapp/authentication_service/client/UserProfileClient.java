@@ -12,6 +12,6 @@ import java.util.Optional;
 @FeignClient(name = "user-profile-service",url = "http://localhost:8081")
 public interface UserProfileClient {
 
-    @GetMapping("/v1/users/email")
+    @GetMapping("/api/v1/users/email")
     ResponseEntity<Optional<UserDto>> getUserByEmail(@RequestParam String email);
 }
